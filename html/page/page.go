@@ -63,10 +63,10 @@ func (pold Page) Add(args ...any) *Page {
 	return &p
 }
 
-func (p *Page) AddStylesheet(ss *lazyassets.Stylesheet) *Page {
-	p.AddStyleLink(ss.Path)
-	return p
-}
+//func (p *Page) AddStylesheet(ss *lazyassets.Stylesheet) *Page {
+//	p.AddStyleLink(ss.Path)
+//	return p
+//}
 
 func (p *Page) AddStyleLink(href string) *Page {
 	if len(href) == 0 {
@@ -77,7 +77,7 @@ func (p *Page) AddStyleLink(href string) *Page {
 	}
 
 	if p.Assets != nil {
-		href = p.Assets.Get(href)
+		//href = p.Assets.Get(href)
 	}
 
 	s := style.Style{
@@ -184,11 +184,12 @@ func (p *Page) scripts() []io.WriterTo {
 	//	}
 	for _, s := range p.Scripts {
 		if p.Assets != nil {
-			path, f := p.Assets.Permalink(s.Src)
-			if f != nil {
-				s.Src = path
-				s.Integrity = f.Integrity()
+			f := p.Assets.Find(s.Src)
+			if f == nil {
+				panic("File not found: " + s.Src)
 			}
+			s.Src = f.Permalink()
+			s.Integrity = f.Integrity()
 		}
 		scripts = append(scripts, s.Element())
 	}
@@ -208,15 +209,14 @@ func (p *Page) toPermalink(path string) string {
 		return path
 	}
 
-	link, f := p.Assets.Permalink(path[1:])
+	f := p.Assets.Find(path[1:])
 	if f == nil {
-		panic("File not found: " + path)
+		panic("File not found:" + path)
 	}
-
-	return link
+	return f.Permalink()
 }
 
-func (p *Page) findAsset(asset_path string) *lazyassets.File {
+func (p *Page) findAsset(asset_path string) lazyassets.File {
 	if p.Assets == nil {
 		return nil
 	}

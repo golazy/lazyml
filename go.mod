@@ -17,9 +17,5 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.27 // indirect
 	github.com/mr-tron/base58 v1.2.0 // indirect
 	golang.org/x/net v0.27.0 // indirect
-)
-
-replace (
-	golazy.dev/lazyassets => ../lazyassets
-	golazy.dev/lazysupport => ../lazysupport
+	golazy.dev/router v0.0.0-20240806142725-a855a1ebc2fc // indirect
 )
